@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  country  String?
+  cards    Card[]
+}
+
+model Type {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  cards Card[]
+}
+
+model Card {
+  id           Int    @id @default(autoincrement())
+  name         String
+  powerLevel   Int
+  imageUrl     String
+  typeId       Int
+  originCityId Int
+  type         Type   @relation(fields: [typeId], references: [id])
+  originCity   City   @relation(fields: [originCityId], references: [id])
+}
+
+model Team {
+  id            Int      @id @default(autoincrement())
+  country       String   @unique
+  confederation String
+  worldTitles   Int      @default(0)
+  badgeUrl      String?
+  players       Player[]
+}
+
+model Player {
+  id        Int     @id @default(autoincrement())
+  name      String
+  age       Int
+  imageUrl  String?
+  dribling  Int
+  speed     Int
+  dribble   Int
+  stats     Json?
+  teamId    Int
+  team      Team     @relation(fields: [teamId], references: [id])
+  createdAt DateTime @default(now())
+}
